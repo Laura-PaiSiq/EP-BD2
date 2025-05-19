@@ -1,0 +1,46 @@
+-- Tabela: Categoria
+CREATE TABLE categoria (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Tabela: Usuário
+CREATE TABLE usuario (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    localizacao VARCHAR(150) -- opcional
+);
+
+-- Tabela: Livro
+CREATE TABLE livro (
+    id SERIAL PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    autor VARCHAR(150) NOT NULL,
+    ano INT,
+    descricao TEXT,
+    status VARCHAR(20) CHECK (status IN ('disponivel', 'indisponivel')) DEFAULT 'disponivel',
+    categoria_id INT REFERENCES categoria(id),
+    dono_id INT REFERENCES usuario(id) -- usuário dono do livro
+);
+
+-- Tabela: Empréstimo
+CREATE TABLE emprestimo (
+    id SERIAL PRIMARY KEY,
+    livro_id INT REFERENCES livro(id),
+    solicitante_id INT REFERENCES usuario(id),
+    dono_id INT REFERENCES usuario(id),
+    data_inicio DATE NOT NULL,
+    data_fim DATE,
+    status VARCHAR(20) CHECK (status IN ('pendente', 'aprovado', 'recusado', 'concluido')) DEFAULT 'pendente'
+);
+
+-- Tabela: Avaliação
+CREATE TABLE avaliacao (
+    id SERIAL PRIMARY KEY,
+    nota INT CHECK (nota BETWEEN 1 AND 5),
+    comentario TEXT,
+    usuario_id INT REFERENCES usuario(id),
+    livro_id INT REFERENCES livro(id),
+    data_avaliacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
